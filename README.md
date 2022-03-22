@@ -1,5 +1,9 @@
 # Post-processing Stack v2
 
+Modified by James Paterson for use in Hyper-5 video game, forked from original performance modifications here:
+
+https://github.com/KokkuGames/PostProcessing
+
 This branch is under maintenance and holds the current version of the post-processing stack for the built-in pipelines.
 
 Instructions

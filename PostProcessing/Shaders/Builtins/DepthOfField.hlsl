@@ -27,7 +27,29 @@ half3 _TaaParams; // Jitter.x, Jitter.y, Blending
 // CoC calculation
 half4 FragCoC(VaryingsDefault i) : SV_Target
 {
-    float depth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, i.texcoordStereo));
+    //original code
+    //float depth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, i.texcoordStereo));
+	
+	//JP notes: this attempts to limit blurring on very far away areas e.g. skybox so that e.g. alpha blended projectiles
+	//dont look too bad
+    float z = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, i.texcoordStereo);
+    //if (z<=0.001) {
+    //    z = 0.01;
+    //}
+    float maxDepth = LinearEyeDepth(0.0);
+    float depth = LinearEyeDepth(z);
+    //1 if depth is greater than or equal to 3450
+    float s = step(maxDepth-50.0,depth);
+    depth = s*maxDepth*0.3 + (1-s)*depth;
+
+
+    //if (depth>=3450.0) {
+    //    depth = 1000.0;
+    //}
+    //if (depth>=LinearEyeDepth(0.0)-50.0f) {
+    //    depth = LinearEyeDepth(0.01);
+    //}
+    //end of hack from jamie
     half coc = (depth - _Distance) * _LensCoeff / max(depth, 1e-4);
     return saturate(coc * 0.5 * _RcpMaxCoC + 0.5);
 }

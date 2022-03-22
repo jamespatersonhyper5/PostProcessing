@@ -71,6 +71,11 @@ Shader "Hidden/PostProcessing/CopyStd"
                 color = (0.0).xxxx;
             }
 
+            //JP notes - this stops negative numbers in the buffer due to subtractive rendering
+            //in antimatter particles
+            color = max(color,float4(0,0,0,0));
+            //end of hack
+
             return color;
         }
 
